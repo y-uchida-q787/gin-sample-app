@@ -27,12 +27,23 @@ func main() {
 		WriteTimeout: 10 * time.Second,
 	}
 
+	server03 := &http.Server{
+		Addr: ":8082",
+		Handler: server.NewBasicAuthServer(),
+		ReadTimeout: 5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
+
 	g.Go(func() error {
 		return server01.ListenAndServe()
 	})
 
 	g.Go(func() error {
 		return server02.ListenAndServe()
+	})
+
+	g.Go(func() error {
+		return server03.ListenAndServe()
 	})
 
 	if err := g.Wait(); err != nil {

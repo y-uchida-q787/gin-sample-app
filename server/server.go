@@ -6,6 +6,23 @@ import (
 	"net/http"
 )
 
+func NewBasicAuthServer() http.Handler {
+	router := gin.New()
+
+  authorized := router.Group("/user", gin.BasicAuth(gin.Accounts{
+    "admin":   "p@ssw0rd",
+    "user1":   "password1",
+    "user2":   "password2",
+  }))
+
+  authorized.GET("/autheticate", func(c *gin.Context) {
+    user := c.MustGet(gin.AuthUserKey).(string)
+		c.JSON(http.StatusOK, gin.H{ "message": user + " is authenticated!" })
+  })
+
+	return router
+}
+
 func NewsServer() http.Handler {
 	router := gin.New()
 	newsArticleHandler := handler.NewNewsArticleHandler()
